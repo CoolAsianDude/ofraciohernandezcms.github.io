@@ -3,201 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS Quiz - IT College Level</title>
-    <style>
-        :root {
-            --bg-color: #0a0a0a;
-            --card-bg: #121212;
-            --accent-color: #00d4ff;
-            --text-color: #e0e0e0;
-            --border-color: #333;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 10px;
-        }
-
-        h1 { color: var(--accent-color); font-size: 2rem; }
-
-        .quiz-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            transition: transform 0.2s;
-        }
-
-        .question-text {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-
-        .options-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .option {
-            background: #1a1a1a;
-            border: 1px solid var(--border-color);
-            margin: 10px 0;
-            padding: 12px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .option:hover {
-            border-color: var(--accent-color);
-            background: #222;
-        }
-
-        .option input {
-            margin-right: 15px;
-            accent-color: var(--accent-color);
-        }
-
-        .submit-btn {
-            display: block;
-            width: 100%;
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 30px;
-            transition: opacity 0.3s;
-        }
-
-        .submit-btn:hover { opacity: 0.9; }
-
-        #result-container {
-            display: none;
-            text-align: center;
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 12px;
-            border: 2px solid var(--accent-color);
-        }
-
-        .score-display { font-size: 3rem; color: var(--accent-color); margin: 20px 0; }
+    <title>CMS Quiz</title>
+    <link rel="stylesheet" href="style.css"> <style>
+        body { background-color: #0a0a0a; color: #e0e0e0; padding: 40px 20px; }
+        .quiz-container { max-width: 800px; margin: 0 auto; }
+        .quiz-card { background: #121212; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .option { display: block; background: #1a1a1a; padding: 12px; margin: 8px 0; border-radius: 6px; cursor: pointer; border: 1px solid transparent; }
+        .option:hover { border-color: #00d4ff; }
+        .submit-btn { width: 100%; background: #00d4ff; color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 1.1rem; }
+        .back-link { color: #888; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .back-link:hover { color: #00d4ff; }
     </style>
 </head>
 <body>
+    <div class="quiz-container">
+        <a href="index.html" class="back-link">← Back to Presentation</a>
+        <h1 style="color: #00d4ff;">CMS Knowledge Check</h1>
+        <hr style="border: 0; border-top: 1px solid #333; margin-bottom: 30px;">
+        
+        <form id="quiz-form">
+            <div id="questions-gap"></div>
+            <button type="submit" class="submit-btn">Finish and View Score</button>
+        </form>
 
-<div class="container">
-    <header>
-        <h1>CMS Knowledge Check</h1>
-        <p>20 Questions | IT College Level Assessment</p>
-    </header>
-
-    <form id="quiz-form">
-        <div id="quiz-content"></div>
-        <button type="submit" class="submit-btn">Finish Quiz</button>
-    </form>
-
-    <div id="result-container">
-        <h2>Your Results</h2>
-        <div class="score-display" id="final-score">0 / 20</div>
-        <p id="feedback-text"></p>
-        <button onclick="location.reload()" class="submit-btn" style="background: transparent; color: var(--accent-color); border: 1px solid var(--accent-color);">Retake Quiz</button>
+        <div id="result-box" style="display:none; text-align:center; padding: 40px; border: 2px solid #00d4ff; border-radius: 12px; margin-top: 20px;">
+            <h2>Your Score: <span id="score-num" style="color:#00d4ff"></span> / 20</h2>
+            <p id="msg"></p>
+            <button onclick="location.reload()" class="submit-btn" style="background:none; color:#00d4ff; border:1px solid #00d4ff; margin-top:20px;">Try Again</button>
+        </div>
     </div>
-</div>
 
-<script>
-    const quizData = [
-        { q: "What is the main purpose of a Content Management System (CMS)?", a: "B", options: ["To design computer hardware", "To create, manage, and publish digital content", "To replace programming languages"] },
-        { q: "Before CMS existed, how were websites commonly built?", a: "B", options: ["Using cloud platforms", "Using static HTML files", "Using AI-based tools"] },
-        { q: "What problem did static websites mainly have?", a: "B", options: ["They were too secure", "They required manual code editing for updates", "They used too much storage"] },
-        { q: "When did the first CMS platforms emerge?", a: "B", options: ["1980s", "Late 1990s", "2020s"] },
-        { q: "Early CMS platforms were mainly used by which group?", a: "C", options: ["Students", "Small businesses", "Large enterprises"] },
-        { q: "Which period marked the rise of open-source CMS platforms?", a: "A", options: ["Early 2000s", "Late 1980s", "Early 2020s"] },
-        { q: "Which of the following is an example of an open-source CMS?", a: "B", options: ["Microsoft Excel", "WordPress", "Adobe Photoshop"] },
-        { q: "What made open-source CMS popular?", a: "B", options: ["High cost", "Customizable themes and plugins", "Limited features"] },
-        { q: "What is the role of the backend in a CMS?", a: "B", options: ["Displays content to users", "Manages content, users, and workflows", "Handles internet connection"] },
-        { q: "What component stores CMS content and system data?", a: "B", options: ["Frontend", "Database", "Browser"] },
-        { q: "What is the main function of APIs in modern CMS?", a: "C", options: ["To design website layouts", "To store images", "To deliver content across different platforms"] },
-        { q: "Which type of CMS delivers content only through APIs?", a: "B", options: ["Traditional CMS", "Headless CMS", "Static CMS"] },
-        { q: "What is a key advantage of headless CMS?", a: "C", options: ["Limited flexibility", "Single-platform use", "Multi-platform content delivery"] },
-        { q: "Which technology is commonly used in CMS backend development?", a: "A", options: ["PHP", "Microsoft Word", "AutoCAD"] },
-        { q: "Which database is commonly used in CMS platforms?", a: "A", options: ["MySQL", "Paint", "Notepad"] },
-        { q: "Which of the following is a common application of CMS?", a: "B", options: ["Hardware manufacturing", "Learning Management Systems", "Operating system installation"] },
-        { q: "Why are CMS platforms frequent targets of cyberattacks?", a: "B", options: ["They are rarely used", "They are widely used", "They do not use databases"] },
-        { q: "What is a common cause of CMS security vulnerabilities?", a: "B", options: ["Updated plugins", "Outdated plugins", "Strong passwords"] },
-        { q: "What is a major performance issue in CMS?", a: "B", options: ["Excessive caching", "Too many plugins", "Lack of internet cables"] },
-        { q: "Which trend represents the future direction of CMS?", a: "B", options: ["Manual HTML editing", "Headless and API-first architecture", "Removal of databases"] }
-    ];
+    <script>
+        const questions = [
+            { q: "What is the main purpose of a Content Management System (CMS)?", options: ["To design computer hardware", "To create, manage, and publish digital content", "To replace programming languages"], a: 1 },
+            { q: "Before CMS existed, how were websites commonly built?", options: ["Using cloud platforms", "Using static HTML files", "Using AI-based tools"], a: 1 },
+            { q: "What problem did static websites mainly have?", options: ["They were too secure", "They required manual code editing for updates", "They used too much storage"], a: 1 },
+            { q: "When did the first CMS platforms emerge?", options: ["1980s", "Late 1990s", "2020s"], a: 1 },
+            { q: "Early CMS platforms were mainly used by which group?", options: ["Students", "Small businesses", "Large enterprises"], a: 2 },
+            { q: "Which period marked the rise of open-source CMS platforms?", options: ["Early 2000s", "Late 1980s", "Early 2020s"], a: 0 },
+            { q: "Which of the following is an example of an open-source CMS?", options: ["Microsoft Excel", "WordPress", "Adobe Photoshop"], a: 1 },
+            { q: "What made open-source CMS popular?", options: ["High cost", "Customizable themes and plugins", "Limited features"], a: 1 },
+            { q: "What is the role of the backend in a CMS?", options: ["Displays content to users", "Manages content, users, and workflows", "Handles internet connection"], a: 1 },
+            { q: "What component stores CMS content and system data?", options: ["Frontend", "Database", "Browser"], a: 1 },
+            { q: "What is the main function of APIs in modern CMS?", options: ["To design website layouts", "To store images", "To deliver content across different platforms"], a: 2 },
+            { q: "Which type of CMS delivers content only through APIs?", options: ["Traditional CMS", "Headless CMS", "Static CMS"], a: 1 },
+            { q: "What is a key advantage of headless CMS?", options: ["Limited flexibility", "Single-platform use", "Multi-platform content delivery"], a: 2 },
+            { q: "Which technology is commonly used in CMS backend development?", options: ["PHP", "Microsoft Word", "AutoCAD"], a: 0 },
+            { q: "Which database is commonly used in CMS platforms?", options: ["MySQL", "Paint", "Notepad"], a: 0 },
+            { q: "Which of the following is a common application of CMS?", options: ["Hardware manufacturing", "Learning Management Systems", "Operating system installation"], a: 1 },
+            { q: "Why are CMS platforms frequent targets of cyberattacks?", options: ["They are rarely used", "They are widely used", "They do not use databases"], a: 1 },
+            { q: "What is a common cause of CMS security vulnerabilities?", options: ["Updated plugins", "Outdated plugins", "Strong passwords"], a: 1 },
+            { q: "What is a major performance issue in CMS?", options: ["Excessive caching", "Too many plugins", "Lack of internet cables"], a: 1 },
+            { q: "Which trend represents the future direction of CMS?", options: ["Manual HTML editing", "Headless and API-first architecture", "Removal of databases"], a: 1 }
+        ];
 
-    const quizContent = document.getElementById('quiz-content');
-    const quizForm = document.getElementById('quiz-form');
-    const resultContainer = document.getElementById('result-container');
-
-    // Load Questions
-    quizData.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'quiz-card';
-        card.innerHTML = `
-            <div class="question-text">${index + 1}. ${item.q}</div>
-            <div class="options-list">
-                ${item.options.map((opt, i) => `
+        const container = document.getElementById('questions-gap');
+        questions.forEach((item, i) => {
+            const div = document.createElement('div');
+            div.className = 'quiz-card';
+            div.innerHTML = `<strong>${i+1}. ${item.q}</strong><br>
+                ${item.options.map((opt, optIndex) => `
                     <label class="option">
-                        <input type="radio" name="q${index}" value="${['A','B','C'][i]}" required>
-                        ${opt}
+                        <input type="radio" name="q${i}" value="${optIndex}" required> ${opt}
                     </label>
-                `).join('')}
-            </div>
-        `;
-        quizContent.appendChild(card);
-    });
-
-    // Handle Scoring
-    quizForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        let score = 0;
-        quizData.forEach((item, index) => {
-            const selected = document.querySelector(`input[name="q${index}"]:checked`);
-            if (selected && selected.value === item.a) {
-                score++;
-            }
+                `).join('')}`;
+            container.appendChild(div);
         });
 
-        quizForm.style.display = 'none';
-        resultContainer.style.display = 'block';
-        document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
-        
-        let feedback = score >= 15 ? "Excellent work! You have a strong grasp of CMS concepts." : 
-                       score >= 10 ? "Good job! You understand the basics, but review the technical architecture." :
-                       "Keep studying! Review the history and modern trends of CMS.";
-        document.getElementById('feedback-text').innerText = feedback;
-        window.scrollTo(0,0);
-    });
-</script>
-
+        document.getElementById('quiz-form').onsubmit = (e) => {
+            e.preventDefault();
+            let score = 0;
+            questions.forEach((item, i) => {
+                const checked = document.querySelector(`input[name="q${i}"]:checked`);
+                if(checked && parseInt(checked.value) === item.a) score++;
+            });
+            document.getElementById('quiz-form').style.display = 'none';
+            document.getElementById('result-box').style.display = 'block';
+            document.getElementById('score-num').innerText = score;
+            document.getElementById('msg').innerText = score > 15 ? "Excellent!" : "Nice try!";
+            window.scrollTo(0,0);
+        };
+    </script>
 </body>
 </html>
