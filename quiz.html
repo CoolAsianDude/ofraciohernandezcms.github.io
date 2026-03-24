@@ -11,33 +11,26 @@
         .quiz-card { background: #1e293b; border-radius: 10px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #38bdf8; }
         .option { display: block; background: #334155; padding: 12px; margin: 8px 0; border-radius: 6px; cursor: pointer; transition: 0.3s; }
         .option:hover { background: #475569; }
-        .submit-btn { width: 100%; background: #38bdf8; color: #020617; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 1.1rem; }
+        .submit-btn { width: 100%; background: #38bdf8; color: #020617; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 8px; font-size: 1.1rem; transition: 0.3s; }
+        .submit-btn:hover { background: #0ea5e9; transform: translateY(-2px); }
         .back-link { color: #38bdf8; text-decoration: none; display: inline-block; margin-bottom: 20px; font-weight: bold; }
         
-        #result-box { 
-            display: none; 
-            background: #020617; 
-            padding: 30px; 
-            border-radius: 12px; 
-            border: 2px solid #38bdf8; 
-            margin-top: 20px; 
-        }
-        .answer-row { 
-            padding: 10px; 
-            border-bottom: 1px solid #1e293b; 
-            display: flex; 
-            justify-content: space-between; 
-        }
-        .correct { color: #4ade80; font-weight: bold; }
-        .wrong { color: #f87171; font-weight: bold; }
-        .key-label { color: #94a3b8; font-size: 0.85rem; margin-right: 10px; }
+        /* Result Styles */
+        #result-box { display: none; background: #020617; padding: 30px; border-radius: 12px; border: 2px solid #38bdf8; margin-top: 20px; animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .answer-row { padding: 12px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+        .correct-mark { color: #4ade80; font-weight: bold; }
+        .wrong-mark { color: #f87171; font-weight: bold; }
+        .label-text { color: #94a3b8; font-size: 0.85rem; margin-right: 10px; }
+        .ans-pill { background: #1e293b; padding: 2px 8px; border-radius: 4px; font-family: monospace; }
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
     <a href="index.html" class="back-link">← Back to Presentation</a>
-    <h1 style="text-align: center;">CMS Knowledge Check</h1>
+    <h1 style="text-align: center; color: #38bdf8;">CMS Knowledge Check</h1>
     
     <form id="quiz-form">
         <div id="questions-area"></div>
@@ -45,19 +38,23 @@
     </form>
 
     <div id="result-box">
-        <h2 style="text-align:center;">Score: <span id="score-num" style="color:#38bdf8"></span> / 20</h2>
-        <p id="feedback" style="text-align:center; margin-bottom: 30px;"></p>
+        <h2 style="text-align:center;">Final Score: <span id="score-num" style="color:#38bdf8"></span> / 20</h2>
+        <p id="feedback" style="text-align:center; margin-bottom: 30px; font-style: italic;"></p>
         
         <div style="background: #1e293b; padding: 20px; border-radius: 8px;">
-            <h3 style="margin-top:0; border-bottom: 1px solid #38bdf8; padding-bottom: 10px;">Answer Key Review</h3>
+            <h3 style="margin-top:0; border-bottom: 1px solid #38bdf8; padding-bottom: 10px; display: flex; justify-content: space-between;">
+                <span>Answer Key</span>
+                <span style="font-size: 0.8rem; color: #94a3b8;">Review your choices</span>
+            </h3>
             <div id="answer-list"></div>
         </div>
 
-        <button onclick="location.reload()" class="submit-btn" style="background:none; color:#38bdf8; border:1px solid #38bdf8; margin-top:30px;">Retake Quiz</button>
+        <button onclick="location.reload()" class="submit-btn" style="background:none; color:#38bdf8; border:2px solid #38bdf8; margin-top:30px;">Retake Quiz</button>
+    </div>
 </div>
 
 <script>
-    // The Answer Key provided: B, B, B, B, C, A, B, B, B, B, C, B, C, A, A, B, B, B, B, B
+    // Official Answer Sheet: B, B, B, B, C, A, B, B, B, B, C, B, C, A, A, B, B, B, B, B
     const correctAnswers = ["B", "B", "B", "B", "C", "A", "B", "B", "B", "B", "C", "B", "C", "A", "A", "B", "B", "B", "B", "B"];
     
     const questions = [
@@ -110,10 +107,10 @@
 
             listHTML += `
                 <div class="answer-row">
-                    <span>Question ${i+1}: <span class="${isRight ? 'correct' : 'wrong'}">${isRight ? '✔' : '✘'}</span></span>
+                    <span>Q${i+1}: <span class="${isRight ? 'correct-mark' : 'wrong-mark'}">${isRight ? '✔ Correct' : '✘ Incorrect'}</span></span>
                     <span>
-                        <span class="key-label">Your Answer: ${selected}</span> 
-                        <span class="correct">Correct: ${correct}</span>
+                        <span class="label-text">You: <span class="ans-pill">${selected}</span></span> 
+                        <span class="correct-mark">Key: <span class="ans-pill">${correct}</span></span>
                     </span>
                 </div>`;
         });
@@ -122,7 +119,13 @@
         document.getElementById('result-box').style.display = 'block';
         document.getElementById('score-num').innerText = score;
         document.getElementById('answer-list').innerHTML = listHTML;
-        document.getElementById('feedback').innerText = score > 17 ? "Outstanding! You are a CMS expert." : "Review the correct answers below to improve.";
+        
+        let feedbackText = "";
+        if(score === 20) feedbackText = "Perfect Score! You're ready for the IT industry.";
+        else if(score >= 15) feedbackText = "Great job! You have a solid understanding of CMS.";
+        else feedbackText = "Keep studying! Review the architecture and modern trends sections.";
+        
+        document.getElementById('feedback').innerText = feedbackText;
         window.scrollTo(0,0);
     };
 </script>
