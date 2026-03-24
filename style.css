@@ -87,3 +87,19 @@ padding:40px;
 background:#020617;
 font-size:28px;
 }
+
+/* Fix for the Quiz CTA button */
+#quiz-cta .card {
+    text-decoration: none;
+    color: #38bdf8; /* Matching your timeline border color */
+    border: 2px solid #38bdf8;
+    display: inline-block;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+#quiz-cta .card:hover {
+    background: #38bdf8;
+    color: #020617;
+    transform: scale(1.05);
+}
